@@ -4,15 +4,16 @@
 
 
 int graphicsTaskNum = 0;
-struct GraphicsState graphicsStates[MAX_GRAPHICS_TASKS] __attribute__((aligned (16)));
-struct GraphicsState * curGraphicsState;
-Gfx displayLists[MAX_GRAPHICS_TASKS][MAX_DISPLAY_LIST_COMMANDS] __attribute__((aligned (16)));
-// The tail of the displaylist we are currently working on
-// We use a global variable because otherwise you'd need to pass this around
-// (by reference) a lot. Welcome to 90s-style programming!
+GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
+Gfx displayLists[MAX_GRAPHICS_TASKS][MAX_DISPLAY_LIST_COMMANDS];
 Gfx * displayListPtr;
 
-
+GraphicsTask * gfxSwitchTask() {
+  // switch the current graphics task
+  graphicsTaskNum = (graphicsTaskNum + 1) % MAX_GRAPHICS_TASKS;
+  displayListPtr = &displayLists[graphicsTaskNum][0];
+  return &graphicsTasks[graphicsTaskNum];
+}
 
 // The initialization of RSP/RDP
 void gfxRCPInit(void)

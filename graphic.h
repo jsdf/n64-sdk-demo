@@ -10,13 +10,14 @@
 #define MAX_GRAPHICS_TASKS 2
 // The maximum length of the display list of one task  
 #define MAX_DISPLAY_LIST_COMMANDS 2048
+// determines the number of matrices we allocate, because we need one for every
+// object we want to position in the world, for each graphics task
 #define MAX_OBJECTS 10
 
-#define fovy 45
-#define aspect (f32)SCREEN_WD/(f32)SCREEN_HT
-#define nearPlane 10
-#define farPlane 1000
-
+#define FOVY 45
+#define ASPECT (f32)SCREEN_WD/(f32)SCREEN_HT
+#define NEAR_PLANE 10
+#define FAR_PLANE 1000
 
 // a 3d position, such as that of an object
 typedef struct Vec3d {
@@ -27,23 +28,25 @@ typedef struct Vec3d {
 
 
 // a struct to hold graphics data used by the RCP which can change at runtime
-typedef struct GraphicsState {
+typedef struct GraphicsTask {
   Mtx projection;
   Mtx modelview;
   Mtx objectTransforms[MAX_OBJECTS];
-} GraphicsState;
+} GraphicsTask;
 
 extern int graphicsTaskNum;
-extern struct GraphicsState graphicsStates[MAX_GRAPHICS_TASKS];
-extern struct GraphicsState * curGraphicsState;
+extern struct GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
+extern struct GraphicsTask * curGraphicsTask;
 extern Gfx displayLists[MAX_GRAPHICS_TASKS][MAX_DISPLAY_LIST_COMMANDS];
-// The tail of the displaylist we are currently working on
+
+// Pointer to the tail of the displaylist we are currently working on.
 // We use a global variable because otherwise you'd need to pass this around
 // (by reference) a lot. Welcome to 90s-style programming!
 extern Gfx * displayListPtr;
 
-extern void gfxRCPInit(void);
-extern void gfxClearCfb(void);
+extern GraphicsTask * gfxSwitchTask();
+extern void gfxRCPInit();
+extern void gfxClearCfb();
 
 extern Gfx setup_rdpstate[];
 extern Gfx setup_rspstate[];
