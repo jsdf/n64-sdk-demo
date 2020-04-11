@@ -79,19 +79,4 @@ DerivedData/
 /*.gcno
 
 
-
 *.n64
-*.blend1
-
-imgui.ini
-
-*.pyc
-*_collision.json
-
-
-trace.log
-trace.json
-trace.html
-trace_*.html
-
-buildcache.json
