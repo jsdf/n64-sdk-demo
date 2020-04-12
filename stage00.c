@@ -22,30 +22,56 @@ struct Vec3d squares[NUM_SQUARES] = {
 };
 
 int squaresRotations[NUM_SQUARES];
+int initSquaresRotations[NUM_SQUARES] = {
+  0,
+  20,
+  40,
+  40,
+  40,
+};
 
 // this is a boolean but the older version of C used by the N64 compiler
 // (roughly C89), doesn't have a bool type, so we just use integers
 int squaresRotationDirection;
 
 // the 'setup' function
-void initStage00() {
+void initStage00() {  
   // the advantage of initializing these values here, rather than statically, is
   // that if you switch stages/levels, and later return to this stage, you can
   // call this function to reset these values.
-  squaresRotationDirection = 0; 
-  *squaresRotations = (int*){
-    0,
-    20,
-    40,
-    40,
-    40,
-  };
+  squaresRotationDirection = 0;
+
+  // In the older version of C used by the N64 compiler (roughly C89), variables
+  // must be declared at the top of a function or block scope. This is an example
+  // of using block scope to declare a variable in the middle of a function.
+  {
+    int i;
+    for (i = 0; i < NUM_SQUARES; ++i) {
+      squaresRotations[i] = initSquaresRotations[i];
+    }
+  }
+}
+
+// the 'update' function
+void updateGame00() {
+  // read controller input
+  nuContDataGetEx(contdata, 0);
+  if (contdata[0].trigger & A_BUTTON){
+    squaresRotationDirection = !squaresRotationDirection;
+  }
+
+  // update square rotations
+  {
+    int i;
+    for (i = 0; i < NUM_SQUARES; ++i)
+    {
+      squaresRotations[i] = (squaresRotations[i] + (squaresRotationDirection ? 1 : -1)) % 360;
+    }
+  }
 }
 
 // the 'draw' function
 void makeDL00() {
-  // in the older version of C used by the N64 compiler (roughly C89), variables
-  // must be declared at the top of a function or block scope
   unsigned short perspNorm;
   GraphicsTask * gfxTask;
   Gfx * displayListStart;
@@ -102,7 +128,6 @@ void makeDL00() {
     G_MTX_MODELVIEW | G_MTX_NOPUSH | G_MTX_LOAD
   );
 
-  // we can use block scope to declare variables in the middle of a function
   {
     int i;
     for (i = 0; i < NUM_SQUARES; ++i)
@@ -130,10 +155,13 @@ void makeDL00() {
 }
 
 
-// a static array of model vertex data
-// this include the position (x,y,z), texture U,V coords (called S,T in the SDK docs)
-// and vertex color values in r,g,b,a form
-Vtx squareVerts[] = {
+// A static array of model vertex data.
+// This include the position (x,y,z), texture U,V coords (called S,T in the SDK)
+// and vertex color values in r,g,b,a form.
+// As this data will be read by the RCP via direct memory access, which is
+// required to be 16-byte aligned, it's a good idea to annotate it with the GCC
+// attribute `__attribute__((aligned (16)))`, to force it to be 16-byte aligned.
+Vtx squareVerts[] __attribute__((aligned (16))) = {
   //  x,   y,  z, flag, S, T,    r,    g,    b,    a
   { -64,  64, -5,    0, 0, 0, 0x00, 0xff, 0x00, 0xff  },
   {  64,  64, -5,    0, 0, 0, 0x00, 0x00, 0x00, 0xff  },
@@ -186,24 +214,6 @@ void drawSquare(GraphicsTask* gfxTask, int i) {
   // pop the matrix that we added back off the stack, to move the drawing position 
   // back to where it was before we rendered this object
   gSPPopMatrix(displayListPtr++, G_MTX_MODELVIEW);
-}
-
-// the 'update' function
-void updateGame00() {
-  // read controller input
-  nuContDataGetEx(contdata, 0);
-  if (contdata[0].trigger & A_BUTTON){
-    squaresRotationDirection = !squaresRotationDirection;
-  }
-
-  // update square rotations
-  {
-    int i;
-    for (i = 0; i < NUM_SQUARES; ++i)
-    {
-      squaresRotations[i] = (squaresRotations[i] + (squaresRotationDirection ? 1 : -1)) % 360;
-    }
-  }
 }
 
 // the nusystem callback for the stage, called once per frame
