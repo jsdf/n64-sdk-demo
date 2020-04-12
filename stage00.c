@@ -29,6 +29,8 @@ int squaresRotations[NUM_SQUARES] = {
   40,
 };
 
+// this is a boolean but the older version of C used by the N64 compiler
+// (roughly C89), doesn't have a bool type, so we just use integers
 int squaresRotationDirection = 0;
 
 // the 'draw' function
@@ -36,9 +38,10 @@ void makeDL00() {
   // in the older version of C used by the N64 compiler (roughly C89), variables
   // must be declared at the top of a function or block scope
   unsigned short perspNorm;
-  Gfx * displayListStart;
   GraphicsTask * gfxTask;
+  Gfx * displayListStart;
   
+  // switch the current graphics task
   // also updates the displayListPtr global variable
   gfxTask = gfxSwitchTask();
   // keep track of start
@@ -83,6 +86,7 @@ void makeDL00() {
     G_MTX_LOAD | // don't multiply matrix by previously-top matrix in stack
     G_MTX_NOPUSH // don't push another matrix onto the stack before operation
   );
+  
   gSPMatrix(displayListPtr++,
     OS_K0_TO_PHYSICAL(&(gfxTask->modelview)),
     // similarly this combination means "replace the modelview matrix with this new matrix"
@@ -114,7 +118,6 @@ void makeDL00() {
     NU_GFX_UCODE_F3DEX, // load the 'F3DEX' version graphics microcode, which runs on the RCP to process this display list
     NU_SC_SWAPBUFFER // tells NuSystem to immediately display the frame on screen after the RCP finishes rendering it
   );
-
 }
 
 

@@ -32,16 +32,11 @@ typedef struct GraphicsTask {
   Mtx projection;
   Mtx modelview;
   Mtx objectTransforms[MAX_OBJECTS];
+  Gfx displayList[MAX_DISPLAY_LIST_COMMANDS];
 } GraphicsTask;
 
-extern int graphicsTaskNum;
 extern struct GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
 extern struct GraphicsTask * curGraphicsTask;
-extern Gfx displayLists[MAX_GRAPHICS_TASKS][MAX_DISPLAY_LIST_COMMANDS];
-
-// Pointer to the tail of the displaylist we are currently working on.
-// We use a global variable because otherwise you'd need to pass this around
-// (by reference) a lot. Welcome to 90s-style programming!
 extern Gfx * displayListPtr;
 
 extern GraphicsTask * gfxSwitchTask();

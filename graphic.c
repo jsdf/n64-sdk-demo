@@ -5,14 +5,19 @@
 
 int graphicsTaskNum = 0;
 GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
-Gfx displayLists[MAX_GRAPHICS_TASKS][MAX_DISPLAY_LIST_COMMANDS];
+
+// Pointer to the tail of the displaylist we are currently working on.
+// We use a global variable because otherwise you'd need to pass this around
+// (by reference) a lot. Welcome to 90s-style programming!
 Gfx * displayListPtr;
 
 GraphicsTask * gfxSwitchTask() {
+  GraphicsTask * nextTask;
   // switch the current graphics task
   graphicsTaskNum = (graphicsTaskNum + 1) % MAX_GRAPHICS_TASKS;
-  displayListPtr = &displayLists[graphicsTaskNum][0];
-  return &graphicsTasks[graphicsTaskNum];
+  nextTask = &graphicsTasks[graphicsTaskNum];
+  displayListPtr = &nextTask->displayList[0];
+  return nextTask;
 }
 
 // The initialization of RSP/RDP
