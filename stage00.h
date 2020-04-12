@@ -5,6 +5,7 @@
 #include "graphic.h"
 
 void stage00(int);
+void initStage00();
 
 void drawSquare(GraphicsTask* gfxTask, int i);
 

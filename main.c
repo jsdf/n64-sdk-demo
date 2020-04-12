@@ -3,7 +3,7 @@
 #include "stage00.h"
 
 
-NUContData  contdata[1]; /* Read data of 1 controller */
+NUContData  contdata[1]; // storage for controller 1 inputs
 
 void mainproc(void)
 {
@@ -13,9 +13,13 @@ void mainproc(void)
   // initialize the controller manager
   nuContInit();
 
-  // set the callback to be called every frame
+  // initialize the level
+  initStage00();
+
+  // set the update+draw callback to be called every frame
   nuGfxFuncSet((NUGfxFunc)stage00);
 
+  // enable video output
   nuGfxDisplayOn();
 
   // send this thread into an infinite loop

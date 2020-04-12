@@ -21,17 +21,26 @@ struct Vec3d squares[NUM_SQUARES] = {
   {0.0f, 0.0f, -100.0f},
 };
 
-int squaresRotations[NUM_SQUARES] = {
-  0,
-  20,
-  40,
-  40,
-  40,
-};
+int squaresRotations[NUM_SQUARES];
 
 // this is a boolean but the older version of C used by the N64 compiler
 // (roughly C89), doesn't have a bool type, so we just use integers
-int squaresRotationDirection = 0;
+int squaresRotationDirection;
+
+// the 'setup' function
+void initStage00() {
+  // the advantage of initializing these values here, rather than statically, is
+  // that if you switch stages/levels, and later return to this stage, you can
+  // call this function to reset these values.
+  squaresRotationDirection = 0; 
+  *squaresRotations = (int*){
+    0,
+    20,
+    40,
+    40,
+    40,
+  };
+}
 
 // the 'draw' function
 void makeDL00() {
@@ -86,7 +95,7 @@ void makeDL00() {
     G_MTX_LOAD | // don't multiply matrix by previously-top matrix in stack
     G_MTX_NOPUSH // don't push another matrix onto the stack before operation
   );
-  
+
   gSPMatrix(displayListPtr++,
     OS_K0_TO_PHYSICAL(&(gfxTask->modelview)),
     // similarly this combination means "replace the modelview matrix with this new matrix"
@@ -180,7 +189,7 @@ void drawSquare(GraphicsTask* gfxTask, int i) {
 }
 
 // the 'update' function
-void update00() {
+void updateGame00() {
   // read controller input
   nuContDataGetEx(contdata, 0);
   if (contdata[0].trigger & A_BUTTON){
@@ -206,5 +215,5 @@ void stage00(int pendingGfx)
     makeDL00();
 
   // update the state of the world for the next frame
-  update00();
+  updateGame00();
 }
