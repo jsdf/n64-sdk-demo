@@ -113,11 +113,12 @@ gSPPopMatrix(displayListPtr++, G_MTX_MODELVIEW);
 drawSphere(); // draw something else, back at 0,0,0
 ```
 
-Although there is a strong correspondence between the two APIs, there are some important differences. On N64, you are responsible for allocating and the matrix (`Mtx`) data structures, whereas OpenGL hides them inside its implementation. As a result of this, when you use a function like `guTranslate()` or  `guRotate()`, it immediately mutates the matrix you passed in. However, as rendering happens later (on the RCP), so any drawing commands between the surrounding `gSPMatrix()` and `gSPPopMatrix()` commands will be rendered with the same matrix value (eg. the same transform).
+Although there is a strong correspondence between the two APIs, there are some important differences. On N64, you are responsible for allocating and the matrix (`Mtx`) data structures, whereas OpenGL hides them inside its implementation. Additionally, when you use a function like `guTranslate()` or  `guRotate()`, it immediately mutates the matrix you passed in. However, rendering happens later (on the RCP), so any drawing commands between the surrounding `gSPMatrix()` and `gSPPopMatrix()` commands will be rendered with the same, final matrix value (eg. the same transform).
 
 
 #### Rendering each square
 
-
+The rendering of each square is wrapped up in the `drawSquare()` function.
+For each of the items in the `squares` array, we push a transformation matrix onto the matrix stack with the position and current rotation of the square, then add a bunch of displaylist commands to load the triangle vertices forming the square, setting a bunch of properties affecting the appearance of the square, and finally rendering the square with the `gSP2Triangles()` command. We also add a `gDPPipeSync()` command to mark the end of the current primative (rendered object sharing the same settings), and use pop our transformation back off the stack with `gSPPopMatrix()`.
 
 
