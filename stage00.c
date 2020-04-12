@@ -80,13 +80,10 @@ void updateGame00() {
 void makeDL00() {
   unsigned short perspNorm;
   GraphicsTask * gfxTask;
-  Gfx * displayListStart;
   
   // switch the current graphics task
   // also updates the displayListPtr global variable
-  gfxTask = gfxSwitchTask();
-  // keep track of start
-  displayListStart = displayListPtr;
+  gfxTask = gfxSwitchTask(); 
 
 
   // prepare the RCP for rendering a graphics task
@@ -149,12 +146,14 @@ void makeDL00() {
   // assert that the display list isn't longer than the memory allocated for it,
   // otherwise we would have corrupted memory when writing it.
   // isn't unsafe memory access fun?
-  assert(displayListPtr - displayListStart < MAX_DISPLAY_LIST_COMMANDS);
+  // this could be made safer by instead asserting on the displaylist length
+  // every time the pointer is advanced, but that would add some overhead.
+  assert(displayListPtr - gfxTask->displayList < MAX_DISPLAY_LIST_COMMANDS);
 
   // create a graphics task to render this displaylist and send it to the RCP
   nuGfxTaskStart(
-    displayListStart,
-    (int)(displayListPtr - displayListStart) * sizeof (Gfx),
+    gfxTask->displayList,
+    (int)(displayListPtr - gfxTask->displayList) * sizeof (Gfx),
     NU_GFX_UCODE_F3DEX, // load the 'F3DEX' version graphics microcode, which runs on the RCP to process this display list
     NU_SC_SWAPBUFFER // tells NuSystem to immediately display the frame on screen after the RCP finishes rendering it
   );

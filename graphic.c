@@ -6,9 +6,9 @@
 int graphicsTaskNum = 0;
 GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
 
-// Pointer to the tail of the displaylist we are currently working on.
-// We use a global variable because otherwise you'd need to pass this around
-// (by reference) a lot. Welcome to 90s-style programming!
+// Pointer to the end of the displaylist we are currently working on.
+// A lot of the example code uses a global variable for this because otherwise
+// you'd need to pass this around (by reference) a lot.
 Gfx * displayListPtr;
 
 GraphicsTask * gfxSwitchTask() {

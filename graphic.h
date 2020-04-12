@@ -36,7 +36,6 @@ typedef struct GraphicsTask {
 } GraphicsTask;
 
 extern struct GraphicsTask graphicsTasks[MAX_GRAPHICS_TASKS];
-extern struct GraphicsTask * curGraphicsTask;
 extern Gfx * displayListPtr;
 
 extern GraphicsTask * gfxSwitchTask();
