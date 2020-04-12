@@ -4,7 +4,7 @@ this is a demo app with heavily commented source showing basic usage of the n64 
 
 the compiled rom file can be found [here](https://github.com/jsdf/squaresdemo/raw/master/squaresdemo.n64)
 
-![recording of the demo](https://media.giphy.com/media/J6V3fgMbTGQdqGFwv9/giphy.gif
+![recording of the demo](https://media.giphy.com/media/J6V3fgMbTGQdqGFwv9/giphy.gif)
 
 ## to build (macOS or linux):
 
