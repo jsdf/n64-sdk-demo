@@ -50,6 +50,6 @@ $(CODESEGMENT):	$(CODEOBJECTS) Makefile
 $(TARGETS):	$(OBJECTS)
 		$(MAKEROM) spec -I$(NUSYSINCDIR) -r $(TARGETS) -e $(APP)
 ifdef MAKEMASK
-	makemask $(TARGETS)
+		makemask $(TARGETS)
 endif
 		
