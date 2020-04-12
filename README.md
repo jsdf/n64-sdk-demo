@@ -82,7 +82,6 @@ gSPMatrix(displayListPtr++,
   OS_K0_TO_PHYSICAL(&(gfxTask->objectTransforms[curMatrix++])),
   G_MTX_MODELVIEW | G_MTX_NOPUSH | G_MTX_LOAD
 );
-
 // translate in the x axis
 guTranslate(&gfxTask->objectTransforms[curMatrix], 10, 0, 0); 
 // push translation matrix
@@ -113,6 +112,8 @@ gSPPopMatrix(displayListPtr++, G_MTX_MODELVIEW);
 
 drawSphere(); // draw something else, back at 0,0,0
 ```
+
+Although there is a strong correspondence between the two APIs, there are some important differences. On N64, you are responsible for allocating and the matrix (`Mtx`) data structures, whereas OpenGL hides them inside its implementation. As a result of this, when you use a function like `guTranslate()` or  `guRotate()`, it immediately mutates the matrix you passed in. However, as rendering happens later (on the RCP), so any drawing commands between the surrounding `gSPMatrix()` and `gSPPopMatrix()` commands will be rendered with the same matrix value (eg. the same transform).
 
 
 #### Rendering each square
