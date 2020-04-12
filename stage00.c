@@ -54,9 +54,15 @@ void initStage00() {
 
 // the 'update' function
 void updateGame00() {
-  // read controller input
+  // read controller input from controller 1 (index 0)
   nuContDataGetEx(contdata, 0);
+  // We check if the 'A' Button was pressed using a bitwise AND with
+  // contdata[0].trigger and the A_BUTTON constant.
+  // The contdata[0].trigger property is set only for the frame that the button is
+  // initially pressed. The contdata[0].button property is similar, but stays on
+  // for the duration of the button press.
   if (contdata[0].trigger & A_BUTTON){
+    // when A button is pressed, reverse rotation direction
     squaresRotationDirection = !squaresRotationDirection;
   }
 
