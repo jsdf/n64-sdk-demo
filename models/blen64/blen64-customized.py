@@ -1,6 +1,7 @@
 # Blen64 (modified)
-# this script uses the vertex buffer really inefficiently so probably don't use
-# this except for demo stuff
+# forked from https://github.com/GCaldL/Blen64
+# this script uses the vertex buffer inefficiently, which can result in poor
+# rendering performance. keep that in mind if you use it.
 # - fixed invalid output of x,y,z
 # - fixed invalid use of vertex buffer indices > 32
 # - fixed random value used for flag
