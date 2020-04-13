@@ -122,6 +122,5 @@ For each of the items in the `squares` array, we push a transformation matrix on
 
 #### Rendering a complex mesh
 
-A common approach to including models in your game created in a 3d modeling is to convert them into C source files containing static display lists. You can find an example of this in the `drawN64Logo()` function, which renders the static display lists defined in n64logo.h.
-
+A common approach to including models in your game created in a 3d modeling is to convert them into C source files containing static display lists. A static displaylist is a list of displaylist commands defined in an array. You can find an example of this in the `drawN64Logo()` function, which uses the `gSPDisplayList()` command to render the static display lists defined in [n64logo.h](https://github.com/jsdf/n64-sdk-demo/blob/master/n64logo.h#L1).
 
