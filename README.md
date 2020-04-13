@@ -1,4 +1,4 @@
-# N64 homebrew demo & tutorial
+# Nintendo 64 homebrew demo & tutorial
 
 This is a demo app with heavily commented source showing basic usage of the N64 SDK and the NuSystem framework. The game-specific code is in [stage00.c](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c).
 
