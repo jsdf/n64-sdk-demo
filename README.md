@@ -6,7 +6,7 @@ The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/r
 
 ![recording of the demo](https://media.giphy.com/media/hTmlPHZq8LSDnyGRH7/giphy.gif)
 
-## to build (macOS or linux):
+## How to build (macOS or linux):
 
 - Install [wine](https://www.winehq.org/)
 - Install the n64 sdk. this repo assumes it's in the default location of `C:\ultra` (in the wine filesystem). If you've installed it somewhere else, you'll need to update this path in `compile.bat`
@@ -14,7 +14,7 @@ The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/r
 - Run `./build.sh`. This should build squaresdemo.n64
 - Run squaresdemo.n64 with an emulator or an N64 flashcart
 
-## N64 homebrew tutorial
+## Understanding the code (or, an N64 homebrew tutorial)
 
 There are basically two options for making an N64 game these days:
 - the official Nintendo SDK from the 90s, which comes in Windows 95 and SGI IRIX flavours.
@@ -115,10 +115,10 @@ drawSphere(); // draw something else, back at 0,0,0
 Although there is a strong correspondence between the two APIs, there are some important differences. On N64, you are responsible for allocating and the matrix (`Mtx`) data structures, whereas OpenGL hides them inside its implementation. Additionally, when you use a function like `guTranslate()` or  `guRotate()`, it immediately mutates the matrix you passed in. However, rendering happens later (on the RCP), so any drawing commands between the surrounding `gSPMatrix()` and `gSPPopMatrix()` commands will be rendered with the same, final matrix value (eg. the same transform).
 
 
-#### Rendering each square
+#### Rendering squares
 
-The rendering of each square is wrapped up in the `drawSquare()` function.
-For each of the items in the `squares` array, we push a transformation matrix onto the matrix stack with the position and current rotation of the square, then add a bunch of displaylist commands to load the triangle vertices forming the square, setting a bunch of properties affecting the appearance of the square, and finally rendering the square with the `gSP2Triangles()` command. We also add a `gDPPipeSync()` command to mark the end of the current primative (rendered object sharing the same settings), and use pop our transformation back off the stack with `gSPPopMatrix()`.
+The rendering of each square is wrapped up in the `drawSquare()` function. The square is defined in `squareVerts`, and it is made up of 2 triangles, and colored by RGB colors defined for each vertex.
+For each of the items in the `squares` array, we push a transformation matrix onto the matrix stack with the position and current rotation of the square, then add a bunch of displaylist commands to load the triangle vertices forming the square, and set a bunch of RCP settings affecting the appearance of the square.  Finally we render the square with the `gSP2Triangles()` command. We also add a `gDPPipeSync()` command to mark the end of the current primative (rendered object sharing the same settings), and use pop our transformation back off the stack with `gSPPopMatrix()`.
 
 #### Rendering a complex mesh
 
