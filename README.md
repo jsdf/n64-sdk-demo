@@ -1,6 +1,6 @@
 # Nintendo 64 homebrew demo & tutorial
 
-This is a demo app with heavily commented source showing basic usage of the N64 SDK and the NuSystem framework. The game-specific code is in [stage00.c](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c).
+This is a demo app with heavily-commented source showing basic usage of the N64 SDK and the NuSystem framework. The game-specific code is in [stage00.c](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c).
 
 The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/raw/master/squaresdemo.n64.zip). It can be run with an emulator or an N64 flashcart. Try pressing the A and B buttons.
 
@@ -123,4 +123,11 @@ For each of the items in the `squares` array, we push a transformation matrix on
 #### Rendering a complex mesh
 
 A common approach to including models in your game created in a 3d modeling is to convert them into C source files containing static display lists. A static displaylist is a list of displaylist commands defined in an array. You can find an example of this in the `drawN64Logo()` function, which uses the `gSPDisplayList()` command to render the static display lists defined in [n64logo.h](https://github.com/jsdf/n64-sdk-demo/blob/master/n64logo.h#L1).
+
+### Beyond...
+
+As the SDK docs are online, you can google any N64 function name to find documentation about it, or you can use the google 'site search' feature to search for some topic, for example: [site:http://n64devkit.square7.ch/ memory management](https://www.google.com/search?q=site%3Ahttp%3A%2F%2Fn64devkit.square7.ch%2F+memory+management).
+
+If you would like to see an example of a more complete game codebase, take a look at [goose64](https://github.com/jsdf/goose64).
+
 
