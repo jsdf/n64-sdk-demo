@@ -81,3 +81,6 @@ DerivedData/
 
 *.blend1
 *.n64
+
+*.sublime-project
+*.sublime-workspace
