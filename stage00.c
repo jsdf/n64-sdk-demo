@@ -5,6 +5,7 @@
 #include "graphic.h"
 #include "main.h"
 #include "stage00.h"
+#include "n64logo.h"
 
 
 Vec3d cameraPos = {-200.0f, -200.0f, -200.0f};
@@ -34,12 +35,15 @@ int initSquaresRotations[NUM_SQUARES] = {
 // (roughly C89), doesn't have a bool type, so we just use integers
 int squaresRotationDirection;
 
+int showN64Logo;
+
 // the 'setup' function
 void initStage00() {  
   // the advantage of initializing these values here, rather than statically, is
   // that if you switch stages/levels, and later return to this stage, you can
   // call this function to reset these values.
-  squaresRotationDirection = 0;
+  squaresRotationDirection = FALSE;
+  showN64Logo = FALSE;
 
   // In the older version of C used by the N64 compiler (roughly C89), variables
   // must be declared at the top of a function or block scope. This is an example
@@ -64,6 +68,13 @@ void updateGame00() {
   if (contdata[0].trigger & A_BUTTON){
     // when A button is pressed, reverse rotation direction
     squaresRotationDirection = !squaresRotationDirection;
+  }
+
+  if (contdata[0].button & B_BUTTON){
+    // when B button is held, change squares into n64 logos
+    showN64Logo = TRUE;
+  } else {
+    showN64Logo = FALSE;
   }
 
   // update square rotations
@@ -133,9 +144,39 @@ void makeDL00() {
 
   {
     int i;
+    Vec3d* square;
     for (i = 0; i < NUM_SQUARES; ++i)
     {
-      drawSquare(gfxTask, i);
+      square = &squares[i];
+      // create a transformation matrix representing the position of the square
+      guPosition(
+        &gfxTask->objectTransforms[i],
+        // rotation
+        squaresRotations[i], // roll
+        0.0f, // pitch
+        0.0f, // heading
+        1.0f, // scale
+        // position
+        square->x, square->y, square->z
+      );
+
+      // push relative transformation matrix
+      gSPMatrix(displayListPtr++,
+        OS_K0_TO_PHYSICAL(&(gfxTask->objectTransforms[i])),
+        G_MTX_MODELVIEW | // operating on the modelview matrix stack...
+        G_MTX_PUSH | // ...push another matrix onto the stack...
+        G_MTX_MUL // ...which is multipled by previously-top matrix (eg. a relative transformation)
+      );
+
+      if (showN64Logo) {
+        drawN64Logo();
+      } else {
+        drawSquare();
+      }
+
+      // pop the matrix that we added back off the stack, to move the drawing position 
+      // back to where it was before we rendered this object
+      gSPPopMatrix(displayListPtr++, G_MTX_MODELVIEW);
     }
   }
 
@@ -174,28 +215,7 @@ Vtx squareVerts[] __attribute__((aligned (16))) = {
   { -64, -64, -5,    0, 0, 0, 0xff, 0x00, 0x00, 0xff  },
 };
 
-void drawSquare(GraphicsTask* gfxTask, int i) {
-  Vec3d* square = &squares[i];
-  // create a transformation matrix representing the position of the square
-  guPosition(
-    &gfxTask->objectTransforms[i],
-    // rotation
-    squaresRotations[i], // roll
-    0.0f, // pitch
-    0.0f, // heading
-    1.0f, // scale
-    // position
-    square->x, square->y, square->z
-  );
-
-  // push relative transformation matrix
-  gSPMatrix(displayListPtr++,
-    OS_K0_TO_PHYSICAL(&(gfxTask->objectTransforms[i])),
-    G_MTX_MODELVIEW | // operating on the modelview matrix stack...
-    G_MTX_PUSH | // ...push another matrix onto the stack...
-    G_MTX_MUL // ...which is multipled by previously-top matrix (eg. a relative transformation)
-  );
-
+void drawSquare() {
   // load vertex data for the triangles
   gSPVertex(displayListPtr++, &(squareVerts[0]), 4, 0);
   // depending on which graphical features, the RDP might need to spend 1 or 2
@@ -208,17 +228,32 @@ void drawSquare(GraphicsTask* gfxTask, int i) {
   // enable smooth (gourad) shading and z-buffering
   gSPSetGeometryMode(displayListPtr++, G_SHADE | G_SHADING_SMOOTH | G_ZBUFFER);
 
-  // actually the triangles, using the specified vertices
+  // actually draw the triangles, using the specified vertices
   gSP2Triangles(displayListPtr++,0,1,2,0,0,2,3,0);
 
   // Mark that we've finished sending commands for this particular primitive.
   // This is needed to prevent race conditions inside the rendering hardware in 
   // the case that subsequent commands change rendering settings.
   gDPPipeSync(displayListPtr++);
+}
 
-  // pop the matrix that we added back off the stack, to move the drawing position 
-  // back to where it was before we rendered this object
-  gSPPopMatrix(displayListPtr++, G_MTX_MODELVIEW);
+// this is an example of rendering a model defined as a set of static display lists
+void drawN64Logo() {
+  gDPSetCycleType(displayListPtr++, G_CYC_1CYCLE);
+  gDPSetRenderMode(displayListPtr++, G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2);
+  gSPClearGeometryMode(displayListPtr++,0xFFFFFFFF);
+  gSPSetGeometryMode(displayListPtr++, G_SHADE | G_SHADING_SMOOTH | G_ZBUFFER);
+  
+  // The gSPDisplayList command causes the RCP to render a static display list,
+  // then return to this display list afterwards. These 4 display lists are
+  // defined in n64logo.h, and were generated from a 3D model using a conversion
+  // script.
+  gSPDisplayList(displayListPtr++, N64Yellow_PolyList);
+  gSPDisplayList(displayListPtr++, N64Red_PolyList);
+  gSPDisplayList(displayListPtr++, N64Blue_PolyList);
+  gSPDisplayList(displayListPtr++, N64Green_PolyList);
+
+  gDPPipeSync(displayListPtr++);
 }
 
 // the nusystem callback for the stage, called once per frame

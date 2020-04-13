@@ -79,3 +79,5 @@ DerivedData/
 /*.gcno
 
 
+*.blend1
+*.n64

@@ -7,7 +7,8 @@
 void stage00(int);
 void initStage00();
 
-void drawSquare(GraphicsTask* gfxTask, int i);
+void drawSquare();
+void drawN64Logo();
 
 #endif /* _STAGE00_H_ */
 

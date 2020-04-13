@@ -2,10 +2,9 @@
 
 This is a demo app with heavily commented source showing basic usage of the N64 SDK and the NuSystem framework. The game-specific code is in [stage00.c](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c).
 
-The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/raw/master/squaresdemo.n64)
+The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/raw/master/squaresdemo.n64.zip). It can be run with an emulator or an N64 flashcart. Try pressing the A and B buttons.
 
-
-![recording of the demo](https://media.giphy.com/media/J6V3fgMbTGQdqGFwv9/giphy.gif)
+![recording of the demo](https://media.giphy.com/media/hTmlPHZq8LSDnyGRH7/giphy.gif)
 
 ## to build (macOS or linux):
 
@@ -21,20 +20,20 @@ There are basically two options for making an N64 game these days:
 - the official Nintendo SDK from the 90s, which comes in Windows 95 and SGI IRIX flavours.
 - the modern open source toolchain, which centers on the [libdragon](https://github.com/DragonMinded/libdragon) library and tools.
 
-This tutorial uses the SDK. RetroReversing has a [pretty good tutorial for installing and using the SDK](https://www.retroreversing.com/n64-sdk-setup) under Wine, so you can compile the code in this repo.
+This tutorial uses the SDK. RetroReversing has a [pretty good tutorial for installing and using the SDK](https://www.retroreversing.com/n64-sdk-setup) under Wine, which will allow you to compile the code in this repo.
 
-The N64 SDK comes with a small framework for quickly starting a new game, called NuSystem. The N64 comes with an OS (really, a library that you link into your game binary and boot on the bare metal), which provides features like threads and I/O, but still requires a fair bit of boilerplate to get a game engine set up. NuSystem removes the need to think about threads and initializing the hardware, and just lets you provide the typical `setup()`, `update()`, and `draw()` callbacks that form the core of many simple game engines. In NuSystem these functions are typically called [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L38-L53), [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L56-L77), and [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L80-L160) respectively, where `00` is the stage/level number of the game.
+The N64 SDK comes with a small framework for quickly starting a new game, called NuSystem. The N64 comes with an OS (really, a library that you link into your game binary and boot on the bare metal), which provides features like threads and I/O, but still requires a fair bit of boilerplate to get a game engine set up. NuSystem removes the need to think about threads and initializing the hardware, and just lets you provide the typical `setup()`, `update()`, and `draw()` callbacks that form the core of many simple game engines. In NuSystem these functions are typically called [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L41), [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L60), and [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L91) respectively, where `00` is the stage/level number of the game.
 
 ### Initialization
-When a game using NuSystem boots, it runs the `mainproc()` function in [main.c](https://github.com/jsdf/n64-sdk-demo/blob/master/main.c#L8). This then calls [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L38-L53) to initialize the level, and then [registers the `stage00` callback](https://github.com/jsdf/n64-sdk-demo/blob/master/main.c#L20) so that [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L56-L77), and [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L80-L160) can be called on each frame.
+When a game using NuSystem boots, it runs the `mainproc()` function in [main.c](https://github.com/jsdf/n64-sdk-demo/blob/master/main.c#L8). This then calls [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L41) to initialize the level, and then [registers the `stage00` callback](https://github.com/jsdf/n64-sdk-demo/blob/master/main.c#L20) so that [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L60), and [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L91) can be called on each frame.
 
 From there it's up to you to fill in the logic for these functions with your game-specific code.
 
 ### Reading controller input and updating the game world
 
-In [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L38-L53), we initialized some state: the `squaresRotationDirection` boolean, and the `squaresRotations` array.
+In [`initStage00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L41), we initialized some state: the `squaresRotationDirection` boolean, and the `squaresRotations` array.
 
-In [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L56-L77) we first read the controller input, then update these values as appropriate, each frame. In this example we rotate all the squares a bit each frame, and if the A button is pressed, reverse the direction of their rotation. We'll use these values to determine what to render in the [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L80-L160) function.
+In [`updateGame00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L60) we first read the controller input, then update these values as appropriate, each frame. In this example we rotate all the squares a bit each frame, and if the A button is pressed, reverse the direction of their rotation. We'll use these values to determine what to render in the [`makeDL00()`](https://github.com/jsdf/n64-sdk-demo/blob/master/stage00.c#L91) function.
 
 ### Rendering
 
@@ -120,5 +119,9 @@ Although there is a strong correspondence between the two APIs, there are some i
 
 The rendering of each square is wrapped up in the `drawSquare()` function.
 For each of the items in the `squares` array, we push a transformation matrix onto the matrix stack with the position and current rotation of the square, then add a bunch of displaylist commands to load the triangle vertices forming the square, setting a bunch of properties affecting the appearance of the square, and finally rendering the square with the `gSP2Triangles()` command. We also add a `gDPPipeSync()` command to mark the end of the current primative (rendered object sharing the same settings), and use pop our transformation back off the stack with `gSPPopMatrix()`.
+
+#### Rendering a complex mesh
+
+A common approach to including models in your game created in a 3d modeling is to convert them into C source files containing static display lists. You can find an example of this in the `drawN64Logo()` function, which renders the static display lists defined in n64logo.h.
 
 

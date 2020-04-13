@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu
 
+# this script will build and deploy the rom to an Everdrive64 flashcart
+
 MAKEMASK=1 ./build.sh
 
 for f in *.n64; do
