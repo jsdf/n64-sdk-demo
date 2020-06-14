@@ -8,7 +8,7 @@ The compiled rom file can be found [here](https://github.com/jsdf/n64-sdk-demo/r
 
 ## How to build (macOS or linux):
 
-- Install [wine](https://www.winehq.org/)
+- Install [wine](https://www.winehq.org/). NOTE: wine currently doesn't work with macOS versions [10.15 and up](https://wiki.winehq.org/MacOS)
 - Install the n64 sdk. this repo assumes it's in the default location of `C:\ultra` (in the wine filesystem). If you've installed it somewhere else, you'll need to update this path in `compile.bat`
 - Edit `./build.sh` so that WINE_PATH points to your wine binary
 - Run `./build.sh`. This should build squaresdemo.n64
